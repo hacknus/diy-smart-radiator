@@ -1,20 +1,11 @@
-//
-// Created by Linus Stöckli on 02.11.2025.
-//
+#pragma once
 
-#ifndef RADIATOR_CTRL_H
-#define RADIATOR_CTRL_H
+#include "esphome/core/component.h"
+#include "esphome/core/gpio.h"
+#include "esphome/components/uart/uart.h"
 
 namespace esphome {
     namespace radiator_ctrl {
-
-        // Mock base class for local development
-        class Component {
-        public:
-            virtual void setup() {}
-            virtual void loop() {}
-            virtual void dump_config() {}
-        };
 
         class RadiatorCtrl : public Component {
         public:
@@ -25,29 +16,35 @@ namespace esphome {
             void set_target_temperature(float temp) { target_temp_ = temp; }
             float get_current_temperature() const { return current_temp_; }
 
-            // Pin setter methods for ESPHome integration
-            void set_step_pin(int pin) { step_pin_ = pin; }
-            void set_dir_pin(int pin) { dir_pin_ = pin; }
-            void set_enable_pin(int pin) { enable_pin_ = pin; }
-            void set_tmc2209_tx_pin(int pin) { tmc2209_tx_pin_ = pin; }
-            void set_tmc2209_rx_pin(int pin) { tmc2209_rx_pin_ = pin; }
-            void set_display_mosi_pin(int pin) { display_mosi_pin_ = pin; }
-            void set_display_clk_pin(int pin) { display_clk_pin_ = pin; }
-            void set_display_cs_pin(int pin) { display_cs_pin_ = pin; }
-            void set_display_dc_pin(int pin) { display_dc_pin_ = pin; }
-            void set_display_rst_pin(int pin) { display_rst_pin_ = pin; }
+            // Pin setter methods for ESPHome integration - use GPIOPin*
+            void set_step_pin(GPIOPin *pin) { step_pin_ = pin; }
+            void set_dir_pin(GPIOPin *pin) { dir_pin_ = pin; }
+            void set_enable_pin(GPIOPin *pin) { enable_pin_ = pin; }
+            void set_display_mosi_pin(GPIOPin *pin) { display_mosi_pin_ = pin; }
+            void set_display_clk_pin(GPIOPin *pin) { display_clk_pin_ = pin; }
+            void set_display_cs_pin(GPIOPin *pin) { display_cs_pin_ = pin; }
+            void set_display_dc_pin(GPIOPin *pin) { display_dc_pin_ = pin; }
+            void set_display_rst_pin(GPIOPin *pin) { display_rst_pin_ = pin; }
 
-        private:
-            int step_pin_ = 18, dir_pin_ = 19, enable_pin_ = 21;
-            int tmc2209_tx_pin_ = 20, tmc2209_rx_pin_ = 21;
-            int display_mosi_pin_ = 23, display_clk_pin_ = 18, display_cs_pin_ = 5;
-            int display_dc_pin_ = 2, display_rst_pin_ = 4;
-            bool initialized_ = false;
-            float target_temp_ = 20.0f;
-            float current_temp_ = 0.0f;
+            // UART parent setter
+            void set_uart_parent(uart::UARTComponent *parent) { uart_parent_ = parent; }
+
+        protected:
+            GPIOPin *step_pin_{nullptr};
+            GPIOPin *dir_pin_{nullptr};
+            GPIOPin *enable_pin_{nullptr};
+            GPIOPin *display_mosi_pin_{nullptr};
+            GPIOPin *display_clk_pin_{nullptr};
+            GPIOPin *display_cs_pin_{nullptr};
+            GPIOPin *display_dc_pin_{nullptr};
+            GPIOPin *display_rst_pin_{nullptr};
+
+            uart::UARTComponent *uart_parent_{nullptr};
+
+            bool initialized_{false};
+            float target_temp_{20.0f};
+            float current_temp_{0.0f};
         };
 
     } // namespace radiator_ctrl
 } // namespace esphome
-
-#endif
