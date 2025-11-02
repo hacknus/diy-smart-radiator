@@ -35,8 +35,9 @@ async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
 
-    # Add all the source files to the build
-    cg.add_library("radiator_ctrl", None, ["control/pid.cpp", "motor/stepper_control.cpp", "display/gc9a01.cpp", "tmc2209/tmc2209_uart.cpp"])
+    # Add the source files to build
+    cg.add_build_flag("-I.")  # Add current directory to include path
+    cg.add_platformio_option("build_src_filter", ["+<*>", "+<esphome/components/radiator_ctrl/control/*.cpp>", "+<esphome/components/radiator_ctrl/motor/*.cpp>", "+<esphome/components/radiator_ctrl/display/*.cpp>", "+<esphome/components/radiator_ctrl/tmc2209/*.cpp>"])
 
     uart = await cg.get_variable(config[CONF_UART_ID])
     cg.add(var.set_uart_parent(uart))
