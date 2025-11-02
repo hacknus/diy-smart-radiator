@@ -20,12 +20,17 @@ namespace esphome {
         }
 
         void RadiatorCtrl::loop() {
-            // Example logic - you'll need to implement actual sensor reading
-            // Remove the id() calls for now as those require proper ESPHome sensor setup
             float temp = 20.0f;  // placeholder
             float target = 21.0f;  // placeholder
             float out = pid_update(target, temp);
             stepper_move(out);
+        }
+
+        void RadiatorCtrl::dump_config() {
+            ESP_LOGCONFIG(TAG, "Radiator Controller:");
+            LOG_PIN("  Step Pin: ", this->step_pin_);
+            LOG_PIN("  Dir Pin: ", this->dir_pin_);
+            LOG_PIN("  Enable Pin: ", this->enable_pin_);
         }
 
     } // namespace radiator_ctrl
