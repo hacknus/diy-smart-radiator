@@ -23,12 +23,12 @@ CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(CONF_UART_ID): cv.use_id('uart::UARTComponent'),
     cv.Optional(CONF_STEPPER_STEP_PIN, default=18): pins.gpio_output_pin_schema,
     cv.Optional(CONF_STEPPER_DIR_PIN, default=19): pins.gpio_output_pin_schema,
-    cv.Optional(CONF_STEPPER_ENABLE_PIN, default=22): pins.gpio_output_pin_schema,
+    cv.Optional(CONF_STEPPER_ENABLE_PIN, default=23): pins.gpio_output_pin_schema,
     cv.Optional(CONF_DISPLAY_MOSI_PIN, default=23): pins.gpio_output_pin_schema,
     cv.Optional(CONF_DISPLAY_CLK_PIN, default=14): pins.gpio_output_pin_schema,
     cv.Optional(CONF_DISPLAY_CS_PIN, default=5): pins.gpio_output_pin_schema,
     cv.Optional(CONF_DISPLAY_DC_PIN, default=2): pins.gpio_output_pin_schema,
-    cv.Optional(CONF_DISPLAY_RST_PIN, default=15): pins.gpio_output_pin_schema,
+    cv.Optional(CONF_DISPLAY_RST_PIN, default=14): pins.gpio_output_pin_schema,
 }).extend(cv.COMPONENT_SCHEMA)
 
 async def to_code(config):
