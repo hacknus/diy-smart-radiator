@@ -19,7 +19,9 @@ add_library(radiator_ctrl STATIC ${SRC}
         esphome/components/radiator_ctrl/stepper_control.cpp
         esphome/components/radiator_ctrl/stepper_control.h
         esphome/components/radiator_ctrl/tmc2209_uart.cpp
-        esphome/components/radiator_ctrl/tmc2209_uart.h)
+        esphome/components/radiator_ctrl/tmc2209_uart.h
+        esphome/components/radiator_ctrl/gc9a01_driver.cpp
+        esphome/components/radiator_ctrl/gc9a01_driver.h)
 
 # Include ESPHome and ESP-IDF-like paths for hints
 target_include_directories(radiator_ctrl PUBLIC
