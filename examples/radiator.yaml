@@ -1,0 +1,17 @@
+external_components:
+  - source: components
+
+radiator_ctrl:
+  stepper:
+    step_pin: GPIO18
+    dir_pin: GPIO19
+    enable_pin: GPIO21
+  tmc2209:
+    tx_pin: GPIO17
+    rx_pin: GPIO16
+  display:
+    mosi_pin: GPIO23
+    clk_pin: GPIO18
+    cs_pin: GPIO5
+    dc_pin: GPIO2
+    rst_pin: GPIO4
