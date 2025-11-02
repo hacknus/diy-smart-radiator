@@ -2,7 +2,7 @@
 // Created by Linus Stöckli on 02.11.2025.
 //
 
-#include "../pid.h"
+#include "pid.h"
 
 static float kp, ki, kd;
 static float integral = 0.0f;

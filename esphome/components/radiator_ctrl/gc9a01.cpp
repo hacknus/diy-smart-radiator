@@ -2,7 +2,7 @@
 // Created by Linus Stöckli on 02.11.2025.
 //
 
-#include "../gc9a01.h"
+#include "gc9a01.h"
 #include "driver/gpio.h"
 #include "esp_log.h"
 #include <stdio.h>
