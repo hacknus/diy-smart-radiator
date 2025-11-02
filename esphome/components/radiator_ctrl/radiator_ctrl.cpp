@@ -1,11 +1,7 @@
-//
-// Created by Linus Stöckli on 02.11.2025.
-//
 #include "radiator_ctrl.h"
 #include "pid.h"
 #include "stepper_control.h"
 #include "gc9a01.h"
-#include "tmc2209_uart.h"
 #include "esphome/core/log.h"
 
 namespace esphome {
@@ -14,7 +10,18 @@ namespace esphome {
         static const char* TAG = "radiator_ctrl";
 
         void RadiatorCtrl::setup() {
-            stepper_init();
+            // Initialize stepper with GPIOPin objects
+            if (step_pin_ && dir_pin_ && enable_pin_) {
+                stepper_init(step_pin_, dir_pin_, enable_pin_);
+            }
+
+            // Initialize display with GPIOPin objects
+            if (display_mosi_pin_ && display_clk_pin_ && display_cs_pin_ &&
+                display_dc_pin_ && display_rst_pin_) {
+                gc9a01_init(display_mosi_pin_, display_clk_pin_, display_cs_pin_,
+                           display_dc_pin_, display_rst_pin_);
+                }
+
             pid_init(1.0f, 0.1f, 0.01f);
             ESP_LOGI(TAG, "RadiatorCtrl setup completed");
         }

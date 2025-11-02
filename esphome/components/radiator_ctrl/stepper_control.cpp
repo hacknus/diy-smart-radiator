@@ -1,103 +1,70 @@
-//
-// Created by Linus Stöckli on 02.11.2025.
-//
-
 #include "stepper_control.h"
-#include "tmc2209_uart.h"
-#include "driver/gpio.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "esp_log.h"
+#include "esphome/core/log.h"
 
-static const char* TAG = "stepper";
-static uint32_t current_position = 0;
-static uint32_t max_position = 2000; // Maximum steps for full valve range
-static uint32_t step_delay_us = 1000; // 1ms = 1000 steps/sec
+namespace esphome {
 
-void stepper_init() {
-    // Configure GPIO pins
-    gpio_config_t io_conf = {
-        .pin_bit_mask = (1ULL << STEP_PIN) | (1ULL << DIR_PIN) | (1ULL << ENABLE_PIN),
-        .mode = GPIO_MODE_OUTPUT,
-        .pull_up_en = GPIO_PULLUP_DISABLE,
-        .pull_down_en = GPIO_PULLDOWN_DISABLE,
-        .intr_type = GPIO_INTR_DISABLE,
-    };
-    gpio_config(&io_conf);
+    static const char* TAG = "stepper";
+    static GPIOPin *step_pin_obj = nullptr;
+    static GPIOPin *dir_pin_obj = nullptr;
+    static GPIOPin *enable_pin_obj = nullptr;
 
-    // Initialize TMC2209
-    if (!tmc2209_init()) {
-        ESP_LOGE(TAG, "TMC2209 init failed");
-        return;
+    void stepper_init(GPIOPin *step_pin, GPIOPin *dir_pin, GPIOPin *enable_pin) {
+        step_pin_obj = step_pin;
+        dir_pin_obj = dir_pin;
+        enable_pin_obj = enable_pin;
+
+        ESP_LOGI(TAG, "Stepper motor initializing...");
+
+        // Setup GPIO pins
+        if (step_pin) {
+            step_pin->setup();
+            step_pin->pin_mode(gpio::FLAG_OUTPUT);
+            step_pin->digital_write(false);
+        }
+        if (dir_pin) {
+            dir_pin->setup();
+            dir_pin->pin_mode(gpio::FLAG_OUTPUT);
+            dir_pin->digital_write(false);
+        }
+        if (enable_pin) {
+            enable_pin->setup();
+            enable_pin->pin_mode(gpio::FLAG_OUTPUT);
+            enable_pin->digital_write(true); // Active low enable
+        }
+
+        ESP_LOGI(TAG, "Stepper motor initialized");
     }
 
-    // Configure driver
-    tmc2209_set_current(800); // 800mA
-    tmc2209_set_microsteps(16); // 16 microsteps
-    tmc2209_enable(true);
+    void stepper_set_speed(uint32_t steps_per_second) {
+        ESP_LOGD(TAG, "Set speed: %lu steps/sec", (unsigned long)steps_per_second);
+    }
 
-    // Enable stepper
-    gpio_set_level(ENABLE_PIN, 0); // Active low
+    void stepper_move(float steps) {
+        if (!step_pin_obj || !dir_pin_obj) {
+            ESP_LOGW(TAG, "Stepper not initialized");
+            return;
+        }
 
-    ESP_LOGI(TAG, "Stepper initialized");
-}
+        ESP_LOGD(TAG, "Move %.2f steps", steps);
 
-void stepper_move(float position_percent) {
-    // Clamp position between 0 and 100
-    if (position_percent < 0) position_percent = 0;
-    if (position_percent > 100) position_percent = 100;
+        // Set direction
+        bool direction = steps > 0;
+        dir_pin_obj->digital_write(direction);
 
-    uint32_t target_position = (uint32_t)(position_percent * max_position / 100.0f);
+        int abs_steps = (int)abs(steps);
 
-    if (target_position == current_position) return;
-
-    bool direction = target_position > current_position;
-    uint32_t steps = direction ? (target_position - current_position) : (current_position - target_position);
-
-    // Set direction
-    gpio_set_level(DIR_PIN, direction ? 1 : 0);
-    vTaskDelay(pdMS_TO_TICKS(1)); // Short delay after direction change
-
-    // Step the motor
-    for (uint32_t i = 0; i < steps; i++) {
-        gpio_set_level(STEP_PIN, 1);
-        esp_rom_delay_us(step_delay_us / 2);
-        gpio_set_level(STEP_PIN, 0);
-        esp_rom_delay_us(step_delay_us / 2);
-
-        // Update position
-        if (direction) {
-            current_position++;
-        } else {
-            current_position--;
+        // Step the motor
+        for (int i = 0; i < abs_steps; i++) {
+            step_pin_obj->digital_write(true);
+            delayMicroseconds(1000); // 1ms pulse width
+            step_pin_obj->digital_write(false);
+            delayMicroseconds(1000); // 1ms between steps
         }
     }
 
-    ESP_LOGD(TAG, "Moved to position: %lu (%.1f%%)", current_position, position_percent);
-}
-
-void stepper_set_speed(uint32_t steps_per_second) {
-    if (steps_per_second > 0) {
-        step_delay_us = 1000000 / steps_per_second;
-    }
-}
-
-void stepper_home() {
-    ESP_LOGI(TAG, "Homing stepper motor");
-
-    // Move to 0 position slowly
-    gpio_set_level(DIR_PIN, 0); // Direction to close valve
-    stepper_set_speed(200); // Slow speed for homing
-
-    // Move max steps + some extra to ensure we hit the limit
-    for (uint32_t i = 0; i < max_position + 500; i++) {
-        gpio_set_level(STEP_PIN, 1);
-        esp_rom_delay_us(step_delay_us / 2);
-        gpio_set_level(STEP_PIN, 0);
-        esp_rom_delay_us(step_delay_us / 2);
+    void stepper_home() {
+        ESP_LOGI(TAG, "Homing stepper motor");
+        // TODO: Implement homing sequence
     }
 
-    current_position = 0;
-    stepper_set_speed(1000); // Reset to normal speed
-    ESP_LOGI(TAG, "Homing complete");
 }
