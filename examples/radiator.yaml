@@ -88,13 +88,20 @@ number:
     step: 0.1
     optimistic: true
 
+# ────────────────────────────────────────────────────────────────
+# SPI bus (for GC9A01 display)
+# ────────────────────────────────────────────────────────────────
+spi:
+  id: spi_bus
+  clk_pin: GPIO6
+  mosi_pin: GPIO7
+
 radiator_ctrl:
   id: my_radiator
   step_pin: GPIO0
   dir_pin: GPIO1
   uart_id: uart_bus
-  display_mosi_pin: GPIO18
-  display_clk_pin: GPIO19
+  spi_id: spi_bus
   display_cs_pin: GPIO2
   display_dc_pin: GPIO21
   display_rst_pin: GPIO14

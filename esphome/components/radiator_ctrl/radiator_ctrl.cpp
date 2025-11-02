@@ -10,21 +10,38 @@ namespace esphome {
         static const char* TAG = "radiator_ctrl";
 
         void RadiatorCtrl::setup() {
-            // Initialize stepper with GPIOPin objects
-            if (step_pin_ && dir_pin_ && enable_pin_) {
-                stepper_init(step_pin_, dir_pin_, enable_pin_);
+            // Initialize SPI device first
+            this->spi_setup();
+
+            // Check only the pins we actually manage (not MOSI/CLK)
+            if (cs_pin_ && dc_pin_ && rst_pin_) {
+                // Setup display control pins
+                cs_pin_->setup();
+                cs_pin_->digital_write(true);  // CS high initially
+
+                dc_pin_->setup();
+                rst_pin_->setup();
+
+                // Reset display
+                rst_pin_->digital_write(false);
+                delay(10);
+                rst_pin_->digital_write(true);
+                delay(10);
+
+                ESP_LOGI(TAG, "GC9A01 display initialized");
             }
 
-            // Initialize display with GPIOPin objects
-            if (display_mosi_pin_ && display_clk_pin_ && display_cs_pin_ &&
-                display_dc_pin_ && display_rst_pin_) {
-                gc9a01_init(display_mosi_pin_, display_clk_pin_, display_cs_pin_,
-                           display_dc_pin_, display_rst_pin_);
-                }
+            // Setup stepper pins
+            if (step_pin_ && dir_pin_ && enable_pin_) {
+                step_pin_->setup();
+                dir_pin_->setup();
+                enable_pin_->setup();
+                enable_pin_->digital_write(true);  // Disable stepper initially
 
-            pid_init(1.0f, 0.1f, 0.01f);
-            ESP_LOGI(TAG, "RadiatorCtrl setup completed");
+                ESP_LOGI(TAG, "Stepper motor initialized");
+            }
         }
+
 
         void RadiatorCtrl::loop() {
             float temp = 20.0f;  // placeholder
