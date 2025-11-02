@@ -3,8 +3,11 @@
 //
 
 #include "radiator_ctrl.h"
-#include "control/pid.h"
-#include "motor/stepper_control.h"
+#include "esphome/components/radiator_ctrl/control/pid.h"
+#include "esphome/components/radiator_ctrl/motor/stepper_control.h"
+#include "esphome/components/radiator_ctrl/display/gc9a01.h"
+#include "esphome/components/radiator_ctrl/tmc2209/tmc2209_uart.h"
+
 #include "esp_log.h"
 
 static const char* TAG = "radiator";
