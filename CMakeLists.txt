@@ -12,14 +12,14 @@ file(GLOB_RECURSE SRC
 add_library(radiator_ctrl STATIC ${SRC}
         esphome/components/radiator_ctrl/radiator_ctrl.h
         esphome/components/radiator_ctrl/radiator_ctrl.cpp
-        esphome/components/radiator_ctrl/control/pid.cpp
-        esphome/components/radiator_ctrl/control/pid.h
-        esphome/components/radiator_ctrl/display/gc9a01.cpp
-        esphome/components/radiator_ctrl/display/gc9a01.h
-        esphome/components/radiator_ctrl/motor/stepper_control.cpp
-        esphome/components/radiator_ctrl/motor/stepper_control.h
-        esphome/components/radiator_ctrl/tmc2209/tmc2209_uart.cpp
-        esphome/components/radiator_ctrl/tmc2209/tmc2209_uart.h)
+        esphome/components/radiator_ctrl/pid.cpp
+        esphome/components/radiator_ctrl/pid.h
+        esphome/components/radiator_ctrl/gc9a01.cpp
+        esphome/components/radiator_ctrl/gc9a01.h
+        esphome/components/radiator_ctrl/stepper_control.cpp
+        esphome/components/radiator_ctrl/stepper_control.h
+        esphome/components/radiator_ctrl/tmc2209_uart.cpp
+        esphome/components/radiator_ctrl/tmc2209_uart.h)
 
 # Include ESPHome and ESP-IDF-like paths for hints
 target_include_directories(radiator_ctrl PUBLIC

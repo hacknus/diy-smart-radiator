@@ -3,10 +3,10 @@
 //
 
 #include "radiator_ctrl.h"
-#include "../control/pid.h"
-#include "../motor/stepper_control.h"
-#include "../display/gc9a01.h"
-#include "../tmc2209/tmc2209_uart.h"
+#include "pid.h"
+#include "stepper_control.h"
+#include "gc9a01.h"
+#include "tmc2209_uart.h"
 
 #include "esp_log.h"
 

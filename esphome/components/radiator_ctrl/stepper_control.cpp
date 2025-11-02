@@ -2,8 +2,8 @@
 // Created by Linus Stöckli on 02.11.2025.
 //
 
-#include "stepper_control.h"
-#include "../tmc2209/tmc2209_uart.h"
+#include "../stepper_control.h"
+#include "tmc2209_uart.h"
 #include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
