@@ -23,7 +23,7 @@ namespace esphome {
             void dump_config() override;
 
             void set_target_temperature(float temp) { target_temp_ = temp; }
-            float get_current_temperature() const { return current_temp_ = temp; }
+            float get_current_temperature() const { return current_temp_; }
 
             // Pin setter methods for ESPHome integration
             void set_step_pin(int pin) { step_pin_ = pin; }
